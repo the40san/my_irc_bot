@@ -25,7 +25,6 @@ class Qiita
     items.reject! {|h| @reported_uuid.include?(h["uuid"]) }
 
     items.each do |i|
-      p configatron.defaults.qiita.irc_channel
       Channel(configatron.defaults.qiita.irc_channel).send(i["title"])
       Channel(configatron.defaults.qiita.irc_channel).send(i["url"])
       Channel(configatron.defaults.qiita.irc_channel).send(" ")
