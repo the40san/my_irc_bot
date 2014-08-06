@@ -16,7 +16,7 @@ end
 class Qiita
   include Cinch::Plugin
 
-  timer 3.minues, method: :report_items
+  timer 180, method: :report_items
 
   def report_items
     @reported_uuid ||= []
