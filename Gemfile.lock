@@ -1,0 +1,14 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    cinch (2.1.0)
+    configatron (2.10.0)
+      yamler (>= 0.1.0)
+    yamler (0.1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  cinch
+  configatron (= 2.10.0)
