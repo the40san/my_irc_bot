@@ -1,4 +1,5 @@
 require 'cinch'
+require 'json'
 require 'configatron'
 
 class Mikuji
@@ -12,18 +13,35 @@ class Mikuji
   end
 end
 
+class Qiita
+  include Cinch::Plugin
+
+  timer 3.minues, method: :report_items
+
+  def report_items
+    @reported_uuid ||= []
+    items = JSON.parse(`curl -G https://qiita.com/api/v1/items`)
+
+    items.reject! {|h| @reported_uuid.include?(h["uuid"]) }
+
+    items.each do |i|
+      p configatron.defaults.qiita.irc_channel
+      Channel(configatron.defaults.qiita.irc_channel).send(i["title"])
+      Channel(configatron.defaults.qiita.irc_channel).send(i["url"])
+      Channel(configatron.defaults.qiita.irc_channel).send(" ")
+      @reported_uuid << i["uuid"]
+      sleep(1)
+    end
+  end
+end
+
 bot = Cinch::Bot.new do
   configure do |c|
     configatron.configure_from_yaml("config/config.yml")
-    #c.server = "irc.tokyo.optim.co.jp"
-    #c.nick = "mikuji_bot"
-    #c.channels = ["#mikuji"]
-    #c.plugins.plugins = [Mikuji]
-
     c.server   = configatron.defaults.irc.server_address.to_s
     c.channels = configatron.defaults.irc.joining_channels
     c.nick     = configatron.defaults.bot.nick
-    #c.plugins.plugins = [Mikuji]
+    c.plugins.plugins = [Mikuji, Qiita]
   end
 end
 
